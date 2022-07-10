@@ -15,30 +15,27 @@ class PrioritiesHandler:
         return string, True
 
     def reduce(self, key: str, scraps: List[Union[str, Tuple]]) -> Union[str, Tuple]:
-        if queue := self.priorities.get(key) is None:
+        print("printed in reduce")
+        print(self.priorities)
+        queue = self.priorities.get(key) 
+        if queue is None:
             return True
         minimum = min([queue.index(scrap) for scrap in scraps])
         return queue[minimum]
 
+    def collect_scraps(self, phrases: List[str]) -> Dict[str, list]:
+        result = defaultdict(list)
+        for phrase in phrases:
+            bite, scrap = self.bite(phrase)
+            result[bite].append(scrap)
+        return result
 
-def collect_scraps(phrases: List[str], handler: PrioritiesHandler) -> Dict[str, list]:
-    result = defaultdict(list)
-    for phrase in phrases:
-        bite, scrap = handler.bite(phrase)
-        result[bite].append(scrap)
-    return result
-
-
-def category_parse(phrases: list, handler: PrioritiesHandler = None) -> dict:
-    if handler is None:
-        handler = PrioritiesHandler()
-
-    result = defaultdict(list)
-    for phrase in phrases:
-        bite, scrap = handler.bite(phrase)
-        result[bite].append(scrap)
-
-    return {key: handler.reduce(key, value) for key, value in result.items()}
+    def category_parse(self, phrases: list) -> dict:
+        print(self.collect_scraps(phrases))
+        return {
+            key: self.reduce(key, scraps)
+            for key, scraps in self.collect_scraps(phrases).items()
+        }
 
 
 def standardize_string(string: str) -> str:

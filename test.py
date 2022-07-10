@@ -1,4 +1,4 @@
-from main import standardize_string, category_parse, PrioritiesHandler
+from main import standardize_string, PrioritiesHandler
 
 
 def test_standardize_string():
@@ -16,11 +16,20 @@ def test_bite_no_priority():
 
 def test_bite_with_priority():
     handler = PrioritiesHandler({"bite_":["me"]})
-    print(handler.bite("bite_me"))
     assert handler.bite("bite_me") == ("bite_", "me")
 
 
+def test_collect_scraps():
+    handler = PrioritiesHandler({"one": ["boy"]})
+    assert handler.collect_scraps(["oneboy", "two", "three"]) == {
+        "one": ["boy"],
+        "two": [True],
+        "three": [True],
+    }
+
+
 def test_category_parse():
+    handler = PrioritiesHandler()
     data = "one,two,three,four"
     expected = {
         "one": True,
@@ -29,7 +38,7 @@ def test_category_parse():
         "four": True,
     }
 
-    assert category_parse(data.split(",")) == expected
+    assert handler.category_parse(data.split(",")) == expected
 
 
 def test_category_parse_full():
@@ -51,9 +60,9 @@ def test_category_parse_full():
         ],
     }
 
-    dataset_one = "acceptable_breakfasts_french_toast,accpetable_breakfasts_oatmeal"
-
-    print(category_parse(dataset_one.split(","), PrioritiesHandler(priorities=priorities)))
+    dataset_one = "acceptable_breakfasts_french_toast,acceptable_breakfasts_oatmeal"
+    handler = PrioritiesHandler(priorities)
+    assert handler.category_parse(dataset_one.split(",")) = {"acceptable_breakfasts_": "french_toast"}
 
     # What happens if an item starts with the category tag, but is not in
     # the valence list? Pass it through if nothing else in the list is present.
@@ -66,6 +75,7 @@ def test_category_parse_full():
 if __name__ == "__main__":
     test_standardize_string()
     test_bite_no_priority()
+    test_collect_scraps()
     test_bite_with_priority()
     test_category_parse()
-#    test_category_parse_full()
+    test_category_parse_full()
