@@ -15,8 +15,6 @@ class PrioritiesHandler:
         return string, True
 
     def reduce(self, key: str, scraps: List[Union[str, Tuple]]) -> Union[str, Tuple]:
-        print("printed in reduce")
-        print(self.priorities)
         queue = self.priorities.get(key) 
         if queue is None:
             return True
